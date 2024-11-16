@@ -15,7 +15,7 @@ const urlSchema = new Schema({
         ref: 'User',
         required: true
     },
-    visitHistory: [{timestamp: {type: Number}}],
+    visitHistory: [{timestamp: {type: Date}}],
 },
 {
     timestamps: true
