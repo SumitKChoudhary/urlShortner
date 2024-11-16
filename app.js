@@ -1,31 +1,25 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const urlRoutes = require('./routes/url');
-const analyticsRoutes = require('./routes/analytics');
-const authRoutes = require('./routes/auth');
+const routes = require('./routes/routes')
+const errorHandler = require('./middleware/errorHandler');
+require("dotenv").config();
+require('./schedulers/visitHistorySync');
+
 
 
 const app = express();
 
 app.use(bodyParser.json());
-app.use('/url',urlRoutes);
-app.use('/analytics',analyticsRoutes);
-app.use('/auth',authRoutes);
+app.use(routes);
 
-app.use((error, req, res, next)=>{
-   console.log(error);
-   const status = error.statusCode || 500;
-   const message = error.message;
-   const data = error.data;
-   res.status(status).json({message: message, data: data});
-});
+app.use(errorHandler);
 
 mongoose
   .connect(
-    'mongodb+srv://sumit_123:sumit-123@cluster0.lhtnag6.mongodb.net/messages?retryWrites=true&w=majority&appName=Cluster0'
+    `${process.env.MONGO_URL}`
   )
   .then(result => {
-    app.listen(8080);
+    app.listen(process.env.PORT);
   })
   .catch(err => console.log(err));
